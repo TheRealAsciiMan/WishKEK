@@ -5,7 +5,7 @@ run = True
 img = pygame.image.load("pyg.png")
 posX = 50
 vx = 1
-clock=pygame.time.Clock()
+clock = pygame.time.Clock()
 
 while run:
     for event in pygame.event.get():
