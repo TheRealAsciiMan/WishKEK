@@ -16,8 +16,9 @@ cadeau = []
 pygame.mixer.init()
 pygame.mixer.music.load("musique/musique.wav")
 logo_cordeliers = pygame.image.load('images/logo_cordeliers.png')
-font = pygame.font.SysFont("Harrington", 60)
+font = pygame.font.SysFont("Harrington", 128)
 text_noel = font.render("Joyeux Noël !", True, (0, 0, 0))
+text_enter = font.render("Appuyez sur Entrée", True, (255, 255, 255))
 click = False
 
 f = 0.1
@@ -43,7 +44,6 @@ def draw_cad(x, y, m):
     
     pygame.draw.polygon(surf, (0, 0, 255), ((x+75*m, y+100*m),(x+87*m,y+120*m),(x+100*m, y+140*m),(x+90*m, y+110*m)))
     pygame.draw.polygon(surf, (0, 0, 255), ((x+25*m, y+100*m),(x+37*m,y+120*m),(x*m, y+140*m),(x+40*m, y+110*m)))
-    print("something in the way")
 
 
 def Ganonkek():
@@ -57,26 +57,26 @@ def Ganonkek():
         clock.tick(35)
 
 while run:
+    surf.blit(fond, (0, 0))
+    surf.blit(logo_cordeliers, (50, 50))
+    surf.blit(text_noel, (centre_x - 330, centre_y - 200 * f))
+    draw_cad(centre_x - 100 * f, centre_y * f, f)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-    surf.blit(fond, (0,0))
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if pressed_enter is False:
+        if pressed_enter is False:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     pressed_enter = True
                     thread_ganonkek = threading.Thread(target=Ganonkek)
                     thread_ganonkek.start()
                     pygame.mixer.music.play(loops=-1, start=0.0, fade_ms=1500)
+
+        if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 run = False
-
-
-    surf.blit(fond, (0, 0))
-    surf.blit(logo_cordeliers, (50, 50))
-    surf.blit(text_noel, (centre_x, centre_y-150*f))
-    draw_cad(centre_x-100*f, centre_y*f, f)
+    if pressed_enter is False:
+        surf.blit(text_enter, (centre_x - 500, centre_y + 150 * f))
     pygame.display.flip()
     clock.tick(30)
 
