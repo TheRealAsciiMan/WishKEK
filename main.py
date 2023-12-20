@@ -10,16 +10,12 @@ fond = pygame.transform.scale(fond, (largeur, hauteur))
 surf = pygame.display.set_mode((largeur, hauteur))
 centre_x = largeur // 2
 centre_y = hauteur // 2
-posX = 50
-vx = 1
 cadeau = []
 pygame.mixer.init()
 pygame.mixer.music.load("musique/musique.wav")
-logo_cordeliers = pygame.image.load('images/logo_cordeliers.png')
 font = pygame.font.SysFont("Harrington", 128)
 text_noel = font.render("Joyeux Noël !", True, (0, 0, 0))
 text_enter = font.render("Appuyez sur Entrée", True, (255, 255, 255))
-click = False
 
 f = 0.1
 if 800 <= largeur < 1200:
@@ -34,16 +30,16 @@ elif 2000 <= largeur:
     f = 2.5
 images_ganonkek = [pygame.image.load(f"frames/frame_{i:02d}_delay-0.04s.gif") for i in range(18)]
 images_ganonkek = [pygame.transform.scale(image, (int(image.get_width() * f), int(image.get_height() * f))) for image in images_ganonkek]
+logo_cordeliers = pygame.image.load('images/logo_cordeliers.png')
+logo_cordeliers = pygame.transform.scale(logo_cordeliers, (int(logo_cordeliers.get_width() * f/2), int(logo_cordeliers.get_height() * f/2)))
+image_cadeau = pygame.image.load('images/Cadeau.png')
+image_cadeau = pygame.transform.scale(image_cadeau, (int(image_cadeau.get_width() * f/2), int(image_cadeau.get_height() * f/2)))
+image_traineau = pygame.image.load('images/traineau.png')
+image_traineau = pygame.transform.scale(image_traineau, (int(image_traineau.get_width() * f/2), int(image_traineau.get_height() * f/2)))
 compteur_frame = 0
 pressed_enter = False
 clock=pygame.time.Clock()
 
-def draw_cad(x, y, m):
-    pygame.draw.rect(surf, (255, 255, 255), ((x, y), (x+100*m, y+100*m)))
-    pygame.draw.line(surf, (0, 0, 255), (x+50*m, y), (x+50*m, y+100*m), 30)
-    
-    pygame.draw.polygon(surf, (0, 0, 255), ((x+75*m, y+100*m),(x+87*m,y+120*m),(x+100*m, y+140*m),(x+90*m, y+110*m)))
-    pygame.draw.polygon(surf, (0, 0, 255), ((x+25*m, y+100*m),(x+37*m,y+120*m),(x*m, y+140*m),(x+40*m, y+110*m)))
 
 
 def Ganonkek():
@@ -52,15 +48,47 @@ def Ganonkek():
     x, y = centre_x - images_ganonkek[0].get_width() // 2, centre_y - images_ganonkek[0].get_height() // 2
     while run:
         nbr_image = compteur_frame_internal % len(images_ganonkek)
+        surf.blit(fond, (0, 0))
         surf.blit(images_ganonkek[nbr_image], (x, y))
         compteur_frame_internal = compteur_frame_internal + 1
-        clock.tick(35)
+        clock.tick(38)
+        pygame.display.flip()
 
+def images():
+    compteur_frame_internal = 0
+    clock = pygame.time.Clock()
+    x1, y1 = centre_x - largeur // 4, centre_y
+    x1 -= 150 *f
+    x2, y2 = centre_x + largeur // 4, centre_y
+    x2 -= 150 *f
+    rainbow_colors = [
+        (255, 0, 0),    # Rouge
+        (255, 165, 0),  # Orange
+        (255, 255, 0),  # Jaune
+        (0, 255, 0),    # Vert
+        (0, 0, 255),    # Bleu
+        (75, 0, 130),   # Indigo
+        (148, 0, 211)   # Violet
+    ]
+    while run:
+        couleur_actuelle = rainbow_colors[compteur_frame_internal % len(rainbow_colors)]
+        surf.blit(image_cadeau, (x1, y1))
+        surf.blit(image_traineau, (x2, y2))
+        surf.blit(logo_cordeliers, (50, 50))
+        text_noel = font.render("Joyeux Noël !", True, couleur_actuelle)
+        surf.blit(text_noel, (centre_x - 330, centre_y - 200 * f))
+        compteur_frame_internal += 1
+        clock.tick(60)
+
+
+
+
+surf.blit(fond, (0, 0))
+surf.blit(logo_cordeliers, (50, 50))
+surf.blit(text_noel, (centre_x - 330, centre_y - 200 * f))
+surf.blit(text_enter, (centre_x - 500, centre_y + 150 * f))
+pygame.display.flip()
 while run:
-    surf.blit(fond, (0, 0))
-    surf.blit(logo_cordeliers, (50, 50))
-    surf.blit(text_noel, (centre_x - 330, centre_y - 200 * f))
-    draw_cad(centre_x - 100 * f, centre_y * f, f)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -69,7 +97,9 @@ while run:
                 if event.key == pygame.K_RETURN:
                     pressed_enter = True
                     thread_ganonkek = threading.Thread(target=Ganonkek)
+                    thread_dessins = threading.Thread(target=images)
                     thread_ganonkek.start()
+                    thread_dessins.start()
                     pygame.mixer.music.play(loops=-1, start=0.0, fade_ms=1500)
 
         if event.type == pygame.KEYDOWN:
@@ -77,7 +107,6 @@ while run:
                 run = False
     if pressed_enter is False:
         surf.blit(text_enter, (centre_x - 500, centre_y + 150 * f))
-    pygame.display.flip()
-    clock.tick(30)
+    clock.tick(10)
 
 pygame.quit()
