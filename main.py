@@ -16,9 +16,9 @@ cadeau = []
 pygame.mixer.init()
 pygame.mixer.music.load("musique/musique.wav")
 logo_cordeliers = pygame.image.load('images/logo_cordeliers.png')
-
-font = pygame.font.SysFont("Arial", 30)
+font = pygame.font.SysFont("Harrington", 60)
 text_noel = font.render("Joyeux Noël !", True, (0, 0, 0))
+click = False
 
 f = 0.1
 if 800 <= largeur < 1200:
@@ -38,11 +38,11 @@ pressed_enter = False
 clock=pygame.time.Clock()
 
 def draw_cad(x, y, m):
-    pygame.draw.line(surf, (255,255,255), (x, y), (x+100*m, y), 10)
-    pygame.draw.line(surf, (255, 255, 255), (x+100*m, y), (x+100*m, y+100*m), 10)
-    pygame.draw.line(surf, (255, 255, 255), (x+100*m, y+100*m), (x, y+100), 10)
-    pygame.draw.line(surf, (255, 255, 255), (x, y+100*m), (x, y), 10)
+    pygame.draw.rect(surf, (255, 255, 255), ((x, y), (x+100*m, y+100*m)))
     pygame.draw.line(surf, (0, 0, 255), (x+50*m, y), (x+50*m, y+100*m), 30)
+    
+    pygame.draw.polygon(surf, (0, 0, 255), ((x+75*m, y+100*m),(x+87*m,y+120*m),(x+100*m, y+140*m),(x+90*m, y+110*m)))
+    pygame.draw.polygon(surf, (0, 0, 255), ((x+25*m, y+100*m),(x+37*m,y+120*m),(x*m, y+140*m),(x+40*m, y+110*m)))
 
 
 def Ganonkek():
@@ -67,6 +67,9 @@ while run:
                     pressed_enter = True
                     thread_ganonkek = threading.Thread(target=Ganonkek)
                     thread_ganonkek.start()
+                    if event.key == pygame.MOUSEBUTTONDOWN:
+                        thread_cadeau = threading.Thread(target=draw_cad)
+                        thread_cadeau.start()
                     pygame.mixer.music.play(loops=-1, start=0.0, fade_ms=1500)
             if event.key == pygame.K_ESCAPE:
                 run = False
@@ -74,7 +77,7 @@ while run:
 
     surf.blit(fond, (0, 0))
     surf.blit(logo_cordeliers, (50, 50))
-    surf.blit(text_noel, (centre_x, centre_y-100*f))
+    surf.blit(text_noel, (centre_x, centre_y-150*f))
     pygame.display.flip()
     clock.tick(30)
 
