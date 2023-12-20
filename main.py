@@ -43,6 +43,7 @@ def draw_cad(x, y, m):
     
     pygame.draw.polygon(surf, (0, 0, 255), ((x+75*m, y+100*m),(x+87*m,y+120*m),(x+100*m, y+140*m),(x+90*m, y+110*m)))
     pygame.draw.polygon(surf, (0, 0, 255), ((x+25*m, y+100*m),(x+37*m,y+120*m),(x*m, y+140*m),(x+40*m, y+110*m)))
+    print("something in the way")
 
 
 def Ganonkek():
@@ -67,9 +68,6 @@ while run:
                     pressed_enter = True
                     thread_ganonkek = threading.Thread(target=Ganonkek)
                     thread_ganonkek.start()
-                    if event.key == pygame.MOUSEBUTTONDOWN:
-                        thread_cadeau = threading.Thread(target=draw_cad)
-                        thread_cadeau.start()
                     pygame.mixer.music.play(loops=-1, start=0.0, fade_ms=1500)
             if event.key == pygame.K_ESCAPE:
                 run = False
@@ -78,6 +76,7 @@ while run:
     surf.blit(fond, (0, 0))
     surf.blit(logo_cordeliers, (50, 50))
     surf.blit(text_noel, (centre_x, centre_y-150*f))
+    draw_cad(centre_x-100*f, centre_y*f, f)
     pygame.display.flip()
     clock.tick(30)
 
