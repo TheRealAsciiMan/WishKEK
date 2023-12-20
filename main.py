@@ -10,24 +10,22 @@ fond = pygame.transform.scale(fond, (largeur, hauteur))
 surf = pygame.display.set_mode((largeur, hauteur))
 centre_x = largeur // 2
 centre_y = hauteur // 2
-cadeau = []
 pygame.mixer.init()
 pygame.mixer.music.load("musique/musique.wav")
 font = pygame.font.SysFont("Harrington", 128)
 text_noel = font.render("Joyeux Noël !", True, (0, 0, 0))
 text_enter = font.render("Appuyez sur Entrée", True, (255, 255, 255))
-
 f = 0.1
 if 800 <= largeur < 1200:
-    f = 1
+    f = 0.25
 elif 400 <= largeur < 800:
-    f = 0.5
+    f = 0.20
 elif 1200 <= largeur < 1600:
-    f = 1.5
+    f = 0.5
 elif 1600 <= largeur < 2000:
-    f = 2
+    f = 1
 elif 2000 <= largeur:
-    f = 2.5
+    f = 2
 images_ganonkek = [pygame.image.load(f"frames/frame_{i:02d}_delay-0.04s.gif") for i in range(18)]
 images_ganonkek = [pygame.transform.scale(image, (int(image.get_width() * f), int(image.get_height() * f))) for image in images_ganonkek]
 logo_cordeliers = pygame.image.load('images/logo_cordeliers.png')
@@ -76,7 +74,7 @@ def images():
         surf.blit(image_traineau, (x2, y2))
         surf.blit(logo_cordeliers, (50, 50))
         text_noel = font.render("Joyeux Noël !", True, couleur_actuelle)
-        surf.blit(text_noel, (centre_x - 330, centre_y - 200 * f))
+        surf.blit(text_noel, (centre_x - 330, centre_y - 300 * f))
         compteur_frame_internal += 1
         clock.tick(60)
 
@@ -85,7 +83,7 @@ def images():
 
 surf.blit(fond, (0, 0))
 surf.blit(logo_cordeliers, (50, 50))
-surf.blit(text_noel, (centre_x - 330, centre_y - 200 * f))
+surf.blit(text_noel, (centre_x - 330, centre_y - 300 * f))
 surf.blit(text_enter, (centre_x - 500, centre_y + 150 * f))
 pygame.display.flip()
 while run:
