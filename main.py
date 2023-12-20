@@ -112,7 +112,6 @@ while run:
             if pressed_enter is False:
                 if event.key == pygame.K_RETURN:
                     pressed_enter = True
-                    surf.blit(logo_cordeliers, (50, 50))
                     thread_traineau = threading.Thread(target=traineau)
                     thread_ganonkek = threading.Thread(target=Ganonkek)
                     thread_traineau.start()
@@ -128,7 +127,8 @@ while run:
 
 
     surf.blit(fond, (0, 0))
+    surf.blit(logo_cordeliers, (50, 50))
     pygame.display.flip()
-    clock.tick(10)
+    clock.tick(30)
 
 pygame.quit()
