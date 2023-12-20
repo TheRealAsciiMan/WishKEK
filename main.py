@@ -15,8 +15,11 @@ vx = 1
 cadeau = []
 pygame.mixer.init()
 pygame.mixer.music.load("musique/musique.wav")
-traineau_s = pygame.image.load('images/traineau.png')
 logo_cordeliers = pygame.image.load('images/logo_cordeliers.png')
+
+font = pygame.font.SysFont("Arial", 30)
+text_noel = font.render("Joyeux Noël !", True, (0, 0, 0))
+
 f = 0.1
 if 800 <= largeur < 1200:
     f = 1
@@ -42,56 +45,6 @@ def draw_cad(x, y, m):
     pygame.draw.line(surf, (0, 0, 255), (x+50*m, y), (x+50*m, y+100*m), 30)
 
 
-class Lanceur:
-    def __init__(self):
-
-        self.y = None
-
-    sprite = pygame.image.load('images/Cadeau.png')
-
-    def draw(self, surf, x, y):
-        self.y = y
-
-        cox = x-1
-        coy = y
-
-        surf.blit(self.sprite,(cox,coy))
-
-        cox += 0.2
-        coy = - cox**2 + 1
-
-def destruction():
-    global cadeau
-    for i in cadeau:
-        if i.y == hauteur:
-            del i
-
-def traineau():
-    global cadeau
-    while run:
-        xtrain = largeur//2
-        ytrain = hauteur//2
-        surf.blit(traineau_s, (xtrain, ytrain))
-        if xtrain == 0:
-            xtrain = 1920
-        elif xtrain == 1920//3:
-            if cadeau[0] == None:
-                pass
-            else:
-                cadeau[0].draw(surf, xtrain, ytrain)
-        elif xtrain == 1920//2:
-            if cadeau[1] == None:
-                pass
-            else:
-                cadeau[1].draw(surf, xtrain, ytrain)
-        elif xtrain == (1920//3)*2:
-            if cadeau[2] == None:
-                pass
-            else:
-                cadeau[2].draw(surf, xtrain, ytrain)
-        xtrain -= 3
-
-
 def Ganonkek():
     compteur_frame_internal = 0
     clock = pygame.time.Clock()
@@ -112,22 +65,16 @@ while run:
             if pressed_enter is False:
                 if event.key == pygame.K_RETURN:
                     pressed_enter = True
-                    thread_traineau = threading.Thread(target=traineau)
                     thread_ganonkek = threading.Thread(target=Ganonkek)
-                    thread_traineau.start()
                     thread_ganonkek.start()
                     pygame.mixer.music.play(loops=-1, start=0.0, fade_ms=1500)
-            if event.key == pygame.K_SPACE:
-                if cadeau == []:
-                    cadeau = [Lanceur() for i in range(3)]
-                traineau()
-                destruction()
             if event.key == pygame.K_ESCAPE:
                 run = False
 
 
     surf.blit(fond, (0, 0))
     surf.blit(logo_cordeliers, (50, 50))
+    surf.blit(text_noel, (centre_x, centre_y-100*f))
     pygame.display.flip()
     clock.tick(30)
 
