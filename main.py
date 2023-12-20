@@ -1,11 +1,10 @@
 import pygame
-import math
 import threading
-import random
 
 pygame.init()
 run = True
-largeur, hauteur = pygame.display.Info().current_w, pygame.display.Info().current_h
+hauteur = pygame.display.Info().current_h
+largeur = hauteur * 16 / 9
 fond = pygame.image.load('images/background.jpg')
 fond = pygame.transform.scale(fond, (largeur, hauteur))
 surf = pygame.display.set_mode((largeur, hauteur))
@@ -14,20 +13,23 @@ centre_y = hauteur // 2
 posX = 50
 vx = 1
 cadeau = []
+pygame.mixer.init()
 pygame.mixer.music.load("musique/musique.wav")
-images_ganonkek = [pygame.image.load(f"frames/frame_{i:02d}_delay-0.04s.gif") for i in range(18)]
 traineau_s = pygame.image.load('images/traineau.png')
 logo_cordeliers = pygame.image.load('images/logo_cordeliers.png')
+f = 0.1
 if 800 <= largeur < 1200:
     f = 1
 elif 400 <= largeur < 800:
-    f = 1
+    f = 0.5
 elif 1200 <= largeur < 1600:
-    f = 1
+    f = 1.5
 elif 1600 <= largeur < 2000:
-    f = 1
+    f = 2
 elif 2000 <= largeur:
-    f = 1
+    f = 2.5
+images_ganonkek = [pygame.image.load(f"frames/frame_{i:02d}_delay-0.04s.gif") for i in range(18)]
+images_ganonkek = [pygame.transform.scale(image, (int(image.get_width() * f), int(image.get_height() * f))) for image in images_ganonkek]
 compteur_frame = 0
 pressed_enter = False
 clock=pygame.time.Clock()
@@ -93,37 +95,40 @@ def traineau():
 def Ganonkek():
     compteur_frame_internal = 0
     clock = pygame.time.Clock()
-    x, y = centre_x - 360 // 2, centre_y - 360 // 2
+    x, y = centre_x - images_ganonkek[0].get_width() // 2, centre_y - images_ganonkek[0].get_height() // 2
     while run:
         nbr_image = compteur_frame_internal % len(images_ganonkek)
         surf.blit(images_ganonkek[nbr_image], (x, y))
         compteur_frame_internal = compteur_frame_internal + 1
-        clock.tick(30)
-
+        clock.tick(35)
 
 while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-    pygame.mixer.music.play(loops=-1)
     surf.blit(fond, (0,0))
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if pressed_enter is False:
                 if event.key == pygame.K_RETURN:
+                    pressed_enter = True
                     surf.blit(logo_cordeliers, (50, 50))
                     thread_traineau = threading.Thread(target=traineau)
                     thread_ganonkek = threading.Thread(target=Ganonkek)
                     thread_traineau.start()
                     thread_ganonkek.start()
+                    pygame.mixer.music.play(loops=-1, start=0.0, fade_ms=1500)
             if event.key == pygame.K_SPACE:
                 if cadeau == []:
                     cadeau = [Lanceur() for i in range(3)]
                 traineau()
                 destruction()
+            if event.key == pygame.K_ESCAPE:
+                run = False
+
 
     surf.blit(fond, (0, 0))
     pygame.display.flip()
-    clock.tick(30)
+    clock.tick(10)
 
 pygame.quit()
