@@ -13,27 +13,11 @@ centre_x = largeur // 2
 centre_y = hauteur // 2
 posX = 50
 vx = 1
-pygame.mixer.music.load("musique/musique.mp3")
-kek0 = pygame.image.load("frames/frame_00_delay-0.04s.gif")
-kek1 = pygame.image.load("frames/frame_01_delay-0.04s.gif")
-kek2 = pygame.image.load("frames/frame_02_delay-0.04s.gif")
-kek3 = pygame.image.load("frames/frame_03_delay-0.04s.gif")
-kek4 = pygame.image.load("frames/frame_04_delay-0.04s.gif")
-kek5 = pygame.image.load("frames/frame_05_delay-0.04s.gif")
-kek6 = pygame.image.load("frames/frame_06_delay-0.04s.gif")
-kek7 = pygame.image.load("frames/frame_07_delay-0.04s.gif")
-kek8 = pygame.image.load("frames/frame_08_delay-0.04s.gif")
-kek9 = pygame.image.load("frames/frame_09_delay-0.04s.gif")
-kek10 = pygame.image.load("frames/frame_10_delay-0.04s.gif")
-kek11 = pygame.image.load("frames/frame_11_delay-0.04s.gif")
-kek12 = pygame.image.load("frames/frame_12_delay-0.04s.gif")
-kek13 = pygame.image.load("frames/frame_13_delay-0.04s.gif")
-kek14 = pygame.image.load("frames/frame_14_delay-0.04s.gif")
-kek15 = pygame.image.load("frames/frame_15_delay-0.04s.gif")
-kek16 = pygame.image.load("frames/frame_16_delay-0.04s.gif")
-kek17 = pygame.image.load("frames/frame_17_delay-0.04s.gif")
-images_ganonkek = [kek0, kek1, kek2, kek3, kek4, kek5, kek6, kek7, kek8, kek9, kek10, kek11, kek12, kek13, kek14, kek15, kek16, kek17]
+cadeau = []
+pygame.mixer.music.load("musique/musique.wav")
+images_ganonkek = [pygame.image.load(f"frames/frame_{i:02d}_delay-0.04s.gif") for i in range(18)]
 traineau_s = pygame.image.load('images/traineau.png')
+logo_cordeliers = pygame.image.load('images/logo_cordeliers.png')
 if 800 <= largeur < 1200:
     f = 1
 elif 400 <= largeur < 800:
@@ -45,13 +29,18 @@ elif 1600 <= largeur < 2000:
 elif 2000 <= largeur:
     f = 1
 compteur_frame = 0
+pressed_enter = False
 clock=pygame.time.Clock()
 
 def draw_cad(x, y, m):
-    pygame.draw.line(surf, (255,255,255), (x, y), (x))
-    pygame.draw.lin
+    pygame.draw.line(surf, (255,255,255), (x, y), (x+100*m, y), 10)
+    pygame.draw.line(surf, (255, 255, 255), (x+100*m, y), (x+100*m, y+100*m), 10)
+    pygame.draw.line(surf, (255, 255, 255), (x+100*m, y+100*m), (x, y+100), 10)
+    pygame.draw.line(surf, (255, 255, 255), (x, y+100*m), (x, y), 10)
+    pygame.draw.line(surf, (0, 0, 255), (x+50*m, y), (x+50*m, y+100*m), 30)
 
-class Cadeaux:
+
+class Lanceur:
     def __init__(self):
 
         self.y = None
@@ -69,39 +58,49 @@ class Cadeaux:
         cox += 0.2
         coy = - cox**2 + 1
 
-def destruction(lst):
-    for i in lst:
+def destruction():
+    global cadeau
+    for i in cadeau:
         if i.y == hauteur:
             del i
 
-def traineau(lst):
-    xtrain = 1920//2
-    ytrain = 540
-    surf.blit(traineau_s, (int(xtrain), int(ytrain)))
-    if xtrain == 0:
-        xtrain = 1920
-    elif xtrain == 1920//3:
-        if lst[0] == None:
-            pass
-        else:
-            lst[0].draw(surf, xtrain, ytrain)
-    elif xtrain == 1920//2:
-        if lst[1] == None:
-            pass
-        else:
-            lst[1].draw(surf, xtrain, ytrain)
-    elif xtrain == (1920//3)*2:
-        if lst[2] == None:
-            pass
-        else:
-            lst[2].draw(surf, xtrain, ytrain)
-    xtrain -= 3
-    pygame.display.flip()
+def traineau():
+    global cadeau
+    while run:
+        xtrain = largeur//2
+        ytrain = hauteur//2
+        surf.blit(traineau_s, (xtrain, ytrain))
+        if xtrain == 0:
+            xtrain = 1920
+        elif xtrain == 1920//3:
+            if cadeau[0] == None:
+                pass
+            else:
+                cadeau[0].draw(surf, xtrain, ytrain)
+        elif xtrain == 1920//2:
+            if cadeau[1] == None:
+                pass
+            else:
+                cadeau[1].draw(surf, xtrain, ytrain)
+        elif xtrain == (1920//3)*2:
+            if cadeau[2] == None:
+                pass
+            else:
+                cadeau[2].draw(surf, xtrain, ytrain)
+        xtrain -= 3
 
 
+def Ganonkek():
+    compteur_frame_internal = 0
+    clock = pygame.time.Clock()
+    x, y = centre_x - 360 // 2, centre_y - 360 // 2
+    while run:
+        nbr_image = compteur_frame_internal % len(images_ganonkek)
+        surf.blit(images_ganonkek[nbr_image], (x, y))
+        compteur_frame_internal = compteur_frame_internal + 1
+        clock.tick(30)
 
-pressed_enter = False
-cadeau = []
+
 while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -110,24 +109,21 @@ while run:
     surf.blit(fond, (0,0))
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
-            pressed_enter == False
-            while pressed_enter is False:
+            if pressed_enter is False:
                 if event.key == pygame.K_RETURN:
-                    x, y = centre_x - 360 // 2, centre_y - 360 // 2
-                    nbr_image = compteur_frame % len(images_ganonkek)
-                    surf.blit(images_ganonkek[nbr_image], (x, y))
-                    compteur_frame = compteur_frame + 1
-                    pygame.display.flip()
-                    clock.tick(30)
-                    surf.blit(fond, (0, 0))
-                elif event.key == pygame.K_SPACE:
-                    if cadeau == []:
-                        cadeau = [Cadeaux() for i in range(3)]
-                    traineau(cadeau)
-                    destruction(cadeau)
+                    surf.blit(logo_cordeliers, (50, 50))
+                    thread_traineau = threading.Thread(target=traineau)
+                    thread_ganonkek = threading.Thread(target=Ganonkek)
+                    thread_traineau.start()
+                    thread_ganonkek.start()
+            if event.key == pygame.K_SPACE:
+                if cadeau == []:
+                    cadeau = [Lanceur() for i in range(3)]
+                traineau()
+                destruction()
 
-
+    surf.blit(fond, (0, 0))
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(30)
 
 pygame.quit()
